@@ -1,9 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from "react-native";
+import Heading from "./src/Core/Heading";
+import Main from "./src/Core/Main";
+import { Colors } from "./src/styles";
+
+const Header = () => {
+  return (
+    <View style={{ height: 30, backgroundColor: Colors.WhiteColor }}></View>
+  );
+};
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Hello jira!</Text>
+      <Header />
+      <Heading />
+      <Main />
     </View>
   );
 }
@@ -11,8 +22,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: Colors.BackgroundColor,
   },
 });
