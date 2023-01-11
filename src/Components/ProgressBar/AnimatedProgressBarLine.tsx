@@ -1,75 +1,72 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Animated, ColorValue } from "react-native";
+import { Style } from "../../styles";
 
-export type ProgressBarRef = {
-  setProgress: (percentage: number, durationInMilliseconds: number) => void;
-  reset: () => void;
-};
-
-interface IAnimatedProgressBarLineProps {
-  progressBarRef?: React.MutableRefObject<ProgressBarRef>;
+export interface IAnimatedProgressBarLineProps {
+  style?: Style;
   color?: ColorValue;
   progressColor?: ColorValue;
-  onProgressChange?: (percentage: number) => void;
+  progress?: number;
+  duration?: number;
+  onProgressChange?: (progress: number) => void;
   onComplete?: () => void;
 }
 
 const AnimatedProgressBarLine: React.FC<IAnimatedProgressBarLineProps> = ({
-  progressBarRef,
+  style,
   color,
   progressColor,
+  progress = 0,
+  duration,
   onProgressChange,
   onComplete,
 }) => {
   const translateXAnimated = useRef(new Animated.Value(-1000)).current;
-  const progressBarWidth = useRef<number>();
-  const targetPercentage = useRef<number>();
+
+  const [progressBarWidth, setProgressBarWidth] = useState<number | undefined>(
+    undefined
+  );
+  const progressBarWidthRef = useRef<number>();
 
   const animate = (value: number, duration?: number) => {
     Animated.timing(translateXAnimated, {
       toValue: value,
       duration: duration,
       useNativeDriver: true,
-    }).start();
+    }).start(onComplete);
   };
 
-  const transitionToPercentage = (transition: number) => {
-    const current = progressBarWidth.current - Math.abs(transition);
-    const percentage = current / progressBarWidth.current;
-
-    return +percentage.toFixed(2);
+  const progressToTransition = () => {
+    return (
+      -progressBarWidth +
+      (progressBarWidth * (progress > 100 ? 100 : progress)) / 100
+    );
   };
 
-  const percentageToTransition = (percentage: number) => {
-    return -progressBarWidth.current + progressBarWidth.current * percentage;
-  };
+  const transitionToProgress = (transition: number) => {
+    const current = progressBarWidthRef.current - Math.abs(transition);
+    const progress = (current / progressBarWidthRef.current) * 100;
 
-  if (progressBarRef !== undefined) {
-    progressBarRef.current = useRef<ProgressBarRef>({
-      setProgress: (percentage: number, durationInMilliseconds: number) => {
-        targetPercentage.current = percentage;
-        animate(percentageToTransition(percentage), durationInMilliseconds);
-      },
-      reset: () => {
-        translateXAnimated.stopAnimation();
-        translateXAnimated.setValue(-progressBarWidth.current);
-      },
-    }).current;
-  }
+    return +progress.toFixed();
+  };
 
   useEffect(() => {
-    let prevPercentage = 0;
+    if (progressBarWidth !== undefined) {
+      animate(progressToTransition(), duration);
+    }
+  }, [progress, progressBarWidth]);
+
+  useEffect(() => {
+    let prevProgress = 0;
 
     translateXAnimated.addListener(({ value: transition }) => {
-      const percentage = transitionToPercentage(transition);
+      if (progressBarWidthRef.current !== undefined) {
+        const progress = transitionToProgress(transition);
 
-      if (prevPercentage !== percentage) {
-        prevPercentage = percentage;
+        if (prevProgress !== progress) {
+          onProgressChange?.(progress);
 
-        onProgressChange?.(percentage);
-
-        if (percentage === targetPercentage.current) {
-          onComplete?.();
+          prevProgress = progress;
         }
       }
     });
@@ -81,10 +78,11 @@ const AnimatedProgressBarLine: React.FC<IAnimatedProgressBarLineProps> = ({
 
   return (
     <View
-      style={[styles.container, { backgroundColor: color }]}
+      style={[style, styles.container, { backgroundColor: color }]}
       onLayout={({ nativeEvent }) => {
-        progressBarWidth.current = nativeEvent.layout.width;
-        translateXAnimated.setValue(-progressBarWidth.current);
+        setProgressBarWidth(nativeEvent.layout.width);
+        translateXAnimated.setValue(-nativeEvent.layout.width);
+        progressBarWidthRef.current = nativeEvent.layout.width;
       }}
     >
       <Animated.View

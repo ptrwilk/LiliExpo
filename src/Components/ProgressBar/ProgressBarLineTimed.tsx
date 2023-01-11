@@ -1,18 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ColorValue, View, Text, StyleSheet } from "react-native";
 import { toHoursMinutesSeconds } from "../../Helpers/Helper";
 import { Colors, Style } from "../../styles";
-import AnimatedProgressBarLine, {
-  ProgressBarRef,
-} from "./AnimatedProgressBarLine";
-
-export type ProgressBarLineTimedRef = {
-  start: () => void;
-  stop: () => void;
-};
+import AnimatedProgressBarLine from "./AnimatedProgressBarLine";
 
 interface IProgressBarLineTimedProps {
-  progressBarRef?: React.MutableRefObject<ProgressBarLineTimedRef>;
   style?: Style;
   color?: ColorValue;
   progressColor?: ColorValue;
@@ -21,7 +13,6 @@ interface IProgressBarLineTimedProps {
 }
 
 const ProgressBarLineTimed: React.FC<IProgressBarLineTimedProps> = ({
-  progressBarRef,
   style,
   color,
   progressColor,
@@ -29,63 +20,53 @@ const ProgressBarLineTimed: React.FC<IProgressBarLineTimedProps> = ({
   onComplete,
 }) => {
   const [totalSeconds, setTotalSeconds] = useState<number>(defaultValue);
-  const currentProgressRef = useRef<number>(0);
+  const [progress, setProgress] = useState<number>(0);
 
-  const intervalRef = useRef<any>();
-  const ref = useRef<ProgressBarRef>();
+  const { hours, minutes, seconds } = toHoursMinutesSeconds(totalSeconds);
 
-  const animateProgress = () => {
-    if (currentProgressRef.current >= 1) {
-      onComplete?.();
+  const update = (maxProgressReached?: () => void) => {
+    setProgress((prev) => {
+      if (prev >= 100) {
+        maxProgressReached?.();
 
-      return;
-    }
-    const percentageTick = 1 / defaultValue;
-    currentProgressRef.current = currentProgressRef.current + percentageTick;
+        onComplete?.();
 
-    ref.current.setProgress(currentProgressRef.current, 1000);
-  };
-
-  const tickByOneSecond = () => {
-    animateProgress();
-
-    setTotalSeconds((prev) => {
-      if (prev - 1 <= 0) {
-        clearInterval(intervalRef.current);
-
-        return 0;
+        return 100;
       }
 
-      return --prev;
+      return prev + 100 / defaultValue;
+    });
+
+    setTotalSeconds((prev) => {
+      if (prev > 0) {
+        return prev - 1;
+      }
+
+      return 0;
     });
   };
 
-  if (progressBarRef !== undefined) {
-    progressBarRef.current = {
-      start() {
-        tickByOneSecond();
-        intervalRef.current = setInterval(() => {
-          tickByOneSecond();
-        }, 1000);
-      },
-      stop() {
-        ref.current.reset();
-        setTotalSeconds(defaultValue);
-        currentProgressRef.current = 0;
+  useEffect(() => {
+    update();
 
-        clearInterval(intervalRef.current);
-      },
+    const interval = setInterval(() => {
+      update(() => {
+        clearInterval(interval);
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
     };
-  }
-
-  const { hours, minutes, seconds } = toHoursMinutesSeconds(totalSeconds);
+  }, []);
 
   return (
     <View style={[style, styles.container]}>
       <AnimatedProgressBarLine
         color={color}
         progressColor={progressColor}
-        progressBarRef={ref}
+        duration={1000}
+        progress={progress}
       />
       <View style={styles.textContainer}>
         <Text style={styles.text}>{pad(hours, 2)}</Text>

@@ -1,22 +1,28 @@
-import { useRef } from "react";
+import { useState } from "react";
 import Card from "../Components/Cards/Cards";
 import { TextCircleButton } from "../Components/CircleButton";
-import { ProgressBarRef } from "../Components/ProgressBar/AnimatedProgressBarLine";
 import ProgressBar from "../Components/ProgressBar/ProgressBar";
 import { Colors } from "../styles";
 
 const ShutdownNowCard = () => {
-  const progressBarRef = useRef<ProgressBarRef>();
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const handlePressIn = () => {
-    progressBarRef.current.setProgress(1, 1500);
+    setDuration(1500);
+    setProgress(100);
   };
 
   const handlePressOut = () => {
-    progressBarRef.current.reset();
+    setDuration(200);
+    setProgress(0);
   };
 
-  const handleComplete = () => {};
+  const handleProgressChange = (progress: number) => {
+    if (progress === 100) {
+      //complete
+    }
+  };
 
   return (
     <Card
@@ -25,10 +31,11 @@ const ShutdownNowCard = () => {
       leftInnerChild={
         <ProgressBar
           style={{ marginTop: 30 }}
-          progressBarRef={progressBarRef}
           color={Colors.FirstDarkColor}
           progressColor={Colors.WhiteColor}
-          onComplete={handleComplete}
+          progress={progress}
+          duration={duration}
+          onProgressChange={handleProgressChange}
         />
       }
       rightChild={

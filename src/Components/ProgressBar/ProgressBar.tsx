@@ -1,42 +1,28 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ColorValue, Text } from "react-native";
-import { Colors, Style } from "../../styles";
+import { View, StyleSheet, Text } from "react-native";
+import { Colors } from "../../styles";
 import AnimatedProgressBarLine, {
-  ProgressBarRef,
+  IAnimatedProgressBarLineProps,
 } from "./AnimatedProgressBarLine";
 
-interface IProgressBarProps {
-  style?: Style;
-  color?: ColorValue;
-  progressColor?: ColorValue;
-  progressBarRef?: React.MutableRefObject<ProgressBarRef>;
-  onComplete?: () => void;
-}
+const ProgressBar: React.FC<IAnimatedProgressBarLineProps> = (props) => {
+  const [progress, setProgress] = useState(0);
 
-const ProgressBar: React.FC<IProgressBarProps> = ({
-  style,
-  color,
-  progressColor,
-  progressBarRef,
-  onComplete,
-}) => {
-  const [progressValue, setProgressValue] = useState(0);
+  const handleProgressChange = (progress: number) => {
+    setProgress(progress);
 
-  const handleProgressChange = (percentage: number) =>
-    setProgressValue(+(percentage * 100).toFixed());
+    props.onProgressChange?.(progress);
+  };
 
   return (
-    <View style={style}>
+    <View style={props.style}>
       <AnimatedProgressBarLine
-        progressBarRef={progressBarRef}
-        color={color}
-        progressColor={progressColor}
+        {...{ ...props, style: undefined }}
         onProgressChange={handleProgressChange}
-        onComplete={onComplete}
       />
       <View style={styles.textContainer}>
-        {progressValue === 0 ? undefined : (
-          <Text style={styles.text}>{progressValue}%</Text>
+        {progress === 0 ? undefined : (
+          <Text style={styles.text}>{progress}%</Text>
         )}
       </View>
     </View>

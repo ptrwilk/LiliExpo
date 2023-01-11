@@ -2,9 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import Card from "../Components/Cards/Cards";
 import { TextCircleButton } from "../Components/CircleButton";
-import ProgressBarLineTimed, {
-  ProgressBarLineTimedRef,
-} from "../Components/ProgressBar/ProgressBarLineTimed";
+import ProgressBarLineTimed from "../Components/ProgressBar/ProgressBarLineTimed";
 import TimeInput from "../Components/TimeInput";
 import { toTotalSeconds } from "../Helpers/Helper";
 import { Colors, Style } from "../styles";
@@ -16,7 +14,6 @@ interface IShutdownTimedCardProps {
 const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
   const [started, setStarted] = useState(false);
 
-  const progressBarRef = useRef<ProgressBarLineTimedRef>();
   const hoursRef = useRef<number>(0);
   const minutesRef = useRef<number>(0);
   const secondsRef = useRef<number>(12);
@@ -25,15 +22,9 @@ const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
     setStarted((prev) => !prev);
   };
 
-  const handleComplete = () => {};
-
-  useEffect(() => {
-    if (started) {
-      progressBarRef.current.start();
-    } else {
-      progressBarRef.current?.stop();
-    }
-  }, [started]);
+  const handleComplete = () => {
+    //complete
+  };
 
   return (
     <Card
@@ -44,7 +35,6 @@ const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
         <>
           {started ? (
             <ProgressBarLineTimed
-              progressBarRef={progressBarRef}
               style={{ marginTop: 30 }}
               color={Colors.SecondDarkColor}
               progressColor={Colors.WhiteColor}
