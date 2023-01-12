@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { shutdownNow } from "../Api/Shutdown";
 import Card from "../Components/Cards/Cards";
 import { TextCircleButton } from "../Components/CircleButton";
 import ProgressBar from "../Components/ProgressBar/ProgressBar";
@@ -20,7 +21,7 @@ const ShutdownNowCard = () => {
 
   const handleProgressChange = (progress: number) => {
     if (progress === 100) {
-      //complete
+      shutdownNow();
     }
   };
 
