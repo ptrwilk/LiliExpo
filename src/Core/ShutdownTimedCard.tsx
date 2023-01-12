@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
+import { getShutdownState, shutdown, shutdownStop } from "../Api/Shutdown";
 import Card from "../Components/Cards/Cards";
 import { TextCircleButton } from "../Components/CircleButton";
 import ProgressBarLineTimed from "../Components/ProgressBar/ProgressBarLineTimed";
 import TimeInput from "../Components/TimeInput";
-import { toTotalSeconds } from "../Helpers/Helper";
+import { toTotalSeconds, toHoursMinutesSeconds } from "../Helpers/Helper";
 import { Colors, Style } from "../styles";
 
 interface IShutdownTimedCardProps {
@@ -18,13 +19,31 @@ const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
   const minutesRef = useRef<number>(0);
   const secondsRef = useRef<number>(12);
 
+  const totalSeconds = () =>
+    toTotalSeconds(hoursRef.current, minutesRef.current, secondsRef.current);
+
   const handlePress = () => {
+    if (started) {
+      shutdownStop();
+    } else {
+      shutdown(totalSeconds());
+    }
     setStarted((prev) => !prev);
   };
 
-  const handleComplete = () => {
-    //complete
-  };
+  useEffect(() => {
+    getShutdownState().then((response) => {
+      if (response !== -1) {
+        const { hours, minutes, seconds } = toHoursMinutesSeconds(response);
+
+        hoursRef.current = hours;
+        minutesRef.current = minutes;
+        secondsRef.current = seconds;
+
+        setStarted(true);
+      }
+    });
+  }, []);
 
   return (
     <Card
@@ -38,12 +57,7 @@ const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
               style={{ marginTop: 30 }}
               color={Colors.SecondDarkColor}
               progressColor={Colors.WhiteColor}
-              totalSeconds={toTotalSeconds(
-                hoursRef.current,
-                minutesRef.current,
-                secondsRef.current
-              )}
-              onComplete={handleComplete}
+              totalSeconds={totalSeconds()}
             />
           ) : (
             <View style={{ flexDirection: "row", paddingTop: 10 }}>
