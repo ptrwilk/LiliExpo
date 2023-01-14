@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Lili",
+    "slug": "Lili",
+    "android": {
+      "package": "com.ptrwilk.Lili"
+    },
+    "version": "1.1.0",
+    "extra": {
+      "eas": {
+        "projectId": "565cef1b-7d29-43cf-bcf3-150c921c44cb"
+      }
+    }
+  },
+  "extra": {
+    "eas": {
+      "projectId": "958c8a1e-e9f6-40a6-bfdb-7e8dc7aa5465"
+    }
+  }
+}
