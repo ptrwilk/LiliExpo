@@ -51,7 +51,7 @@ const NumericInput: React.FC<INumericInput> = ({
   };
 
   const keyboardBackPress = () => {
-    ref.current.blur();
+    ref.current?.blur();
     return true;
   };
 
