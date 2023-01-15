@@ -14,13 +14,16 @@ interface IShutdownTimedCardProps {
 const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
   const [started, setStarted] = useState(false);
   const [totalSeconds, setTotalSeconds] = useState(3600);
-  const { serverStatus } = useLiliContext();
+  const { serverStatus, setServerStatus } = useLiliContext();
 
   const handlePress = () => {
     if (started) {
       shutdownStop();
     } else {
-      shutdown(totalSeconds);
+      shutdown(totalSeconds).catch(() => {
+        setServerStatus("off");
+        setStarted(false);
+      });
     }
 
     setStarted((prev) => !prev);

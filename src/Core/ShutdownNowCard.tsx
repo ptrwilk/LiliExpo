@@ -9,7 +9,7 @@ import { Colors } from "../styles";
 const ShutdownNowCard = () => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const { serverStatus } = useLiliContext();
+  const { serverStatus, setServerStatus } = useLiliContext();
 
   const handlePressIn = () => {
     setDuration(1500);
@@ -23,7 +23,9 @@ const ShutdownNowCard = () => {
 
   const handleProgressChange = (progress: number) => {
     if (progress === 100) {
-      shutdownNow();
+      shutdownNow().catch(() => {
+        setServerStatus("off");
+      });
     }
   };
 
