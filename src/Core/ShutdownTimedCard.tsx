@@ -4,6 +4,7 @@ import Card from "../Components/Cards/Cards";
 import { TextCircleButton } from "../Components/CircleButton";
 import HourMinutesSeconds from "../Components/HourMinutesSeconds";
 import ProgressBarLineTimed from "../Components/ProgressBar/ProgressBarLineTimed";
+import { useLiliContext } from "../Context/LiliContext";
 import { Colors, Style } from "../styles";
 
 interface IShutdownTimedCardProps {
@@ -13,6 +14,7 @@ interface IShutdownTimedCardProps {
 const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
   const [started, setStarted] = useState(false);
   const [totalSeconds, setTotalSeconds] = useState(3600);
+  const { serverStatus } = useLiliContext();
 
   const handlePress = () => {
     if (started) {
@@ -25,13 +27,17 @@ const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
   };
 
   useEffect(() => {
-    getShutdownState().then((response) => {
-      if (response !== -1) {
-        setTotalSeconds(response);
+    getShutdownState()
+      .then((response) => {
+        if (response !== -1) {
+          setTotalSeconds(response);
 
-        setStarted(true);
-      }
-    });
+          setStarted(true);
+        }
+      })
+      .catch((e) => {
+        //empty catch so it does not display an error on mobile
+      });
   }, []);
 
   return (
@@ -65,6 +71,7 @@ const ShutdownTimedCard: React.FC<IShutdownTimedCardProps> = ({ style }) => {
           color={Colors.SecondDarkColor}
           pressedColor={Colors.SecondDarkerColor}
           textColor={Colors.WhiteColor}
+          disabled={serverStatus !== "on"}
           onPress={handlePress}
         />
       }

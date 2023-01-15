@@ -1,5 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Text } from "react-native";
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { LiliContext, ServerStatus } from "./src/Context/LiliContext";
 import Heading from "./src/Core/Heading";
 import Main from "./src/Core/Main";
 import { Colors } from "./src/styles";
@@ -9,14 +11,18 @@ const Header = () => {
 };
 
 export default function App() {
+  const [serverStatus, setServerStatus] = useState<ServerStatus>("unknown");
+
   return (
     <>
       <StatusBar backgroundColor={Colors.WhiteColor} />
-      <View style={styles.container}>
-        <Header />
-        <Heading />
-        <Main />
-      </View>
+      <LiliContext.Provider value={{ serverStatus, setServerStatus }}>
+        <View style={styles.container}>
+          <Header />
+          <Heading />
+          <Main />
+        </View>
+      </LiliContext.Provider>
     </>
   );
 }

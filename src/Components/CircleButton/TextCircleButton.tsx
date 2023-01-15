@@ -8,6 +8,7 @@ interface ITextCircleButtonProps {
   size?: number;
   color?: ColorValue;
   pressedColor?: ColorValue;
+  disabled?: boolean;
   onPress?: () => void;
   onPressIn?: () => void;
   onPressOut?: () => void;
@@ -20,12 +21,14 @@ const TextCircleButton: React.FC<ITextCircleButtonProps> = ({
   size,
   color,
   pressedColor,
+  disabled,
   onPress,
   onPressIn,
   onPressOut,
 }) => {
   return (
     <Pressable
+      disabled={disabled}
       onPress={onPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
@@ -36,6 +39,7 @@ const TextCircleButton: React.FC<ITextCircleButtonProps> = ({
           height: size,
           borderRadius: size / 2,
           backgroundColor: pressed ? pressedColor : color,
+          opacity: disabled === true ? 0.5 : 1,
         },
       ]}
     >

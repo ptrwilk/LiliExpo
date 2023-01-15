@@ -1,21 +1,29 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Colors } from "../styles";
-import { Entypo } from "@expo/vector-icons";
-import { FontCircleButton } from "../Components/CircleButton";
+import ServerStatusIndicator from "../Components/ServerStatusIndicator";
+import { useEffect } from "react";
+import { getShutdownState } from "../Api/Shutdown";
+import { useLiliContext } from "../Context/LiliContext";
 
 const Heading = () => {
+  const { serverStatus, setServerStatus } = useLiliContext();
+
+  useEffect(() => {
+    getShutdownState()
+      .then(() => {
+        setServerStatus("on");
+      })
+      .catch(() => {
+        setServerStatus("off");
+      });
+  }, []);
+
   return (
     <SingleSidedShadowBox>
       <View style={styles.container}>
         <Text style={styles.text}>L I L I</Text>
         <View style={styles.rightContainer}>
-          <FontCircleButton
-            size={40}
-            color={Colors.BackgroundColor}
-            pressedColor={Colors.BackgroundDarkColor}
-          >
-            <Entypo name="signal" size={24} color="black" />
-          </FontCircleButton>
+          <ServerStatusIndicator status={serverStatus} />
         </View>
       </View>
     </SingleSidedShadowBox>
