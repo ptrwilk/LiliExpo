@@ -1,48 +1,42 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
+import { isEmptyOrUndefined } from "../Helpers/Helper";
 import { Style } from "../styles";
 
 interface INumericInput {
   maxLength?: number;
   style?: Style;
-  inputRef?: React.MutableRefObject<number | undefined>;
-  defaultValue?: number;
+  value?: number;
   maxValue?: number;
-  minValue?: number;
   onValueChange?: (value: number) => void;
-  onLostFocus?: () => void;
+  onLostFocus?: (value: number) => void;
   onFocus?: () => void;
 }
 
 const NumericInput: React.FC<INumericInput> = ({
   maxLength,
   style,
-  inputRef,
-  defaultValue = 0,
+  value: propValue = 0,
   maxValue,
-  minValue,
   onValueChange,
   onLostFocus,
   onFocus,
 }) => {
-  const [value, setValue] = useState<string | undefined>(
-    defaultValue?.toString()
-  );
+  const [value, setValue] = useState<string | undefined>();
+
+  useEffect(() => {
+    setValue(propValue?.toString());
+  }, [propValue]);
 
   const ref = useRef<TextInput>();
-
-  if (inputRef) {
-    inputRef.current = value === undefined ? undefined : +value;
-  }
 
   const handleTextChange = (text: string) => {
     //Check if text is a number
     if (!isNaN(text as any)) {
-      const newValue = text === "" ? undefined : text;
+      const newValue = isEmptyOrUndefined(text) ? undefined : text;
       const numericValue = Number(newValue);
 
       if (maxValue && numericValue > maxValue) return;
-      if (minValue && numericValue < minValue) return;
 
       setValue(newValue);
 
@@ -56,13 +50,13 @@ const NumericInput: React.FC<INumericInput> = ({
   };
 
   const handleLostFocus = () => {
-    if (value === undefined || value === "") {
-      setValue(minValue !== undefined ? minValue.toString() : "0");
+    if (isEmptyOrUndefined(value)) {
+      setValue("0");
     }
 
     Keyboard.removeAllListeners("keyboardDidHide");
 
-    onLostFocus?.();
+    onLostFocus?.(!isEmptyOrUndefined(value) ? Number(value) : 0);
   };
 
   const handleFocus = () => {

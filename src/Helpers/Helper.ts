@@ -15,3 +15,6 @@ export const toTotalSeconds = (
 ) => {
   return second + minutes * 60 + hours * 60 * 60;
 };
+
+export const isEmptyOrUndefined = (value: string) =>
+  value === undefined || value === "";

@@ -4,33 +4,26 @@ import { Colors, Style } from "../styles";
 import NumericInput from "./NumericInput";
 
 interface ITimeInputProps {
-  timeInputRef?: React.MutableRefObject<number>;
   style?: Style;
   maxValue?: number;
-  minValue?: number;
   caption?: string;
+  value?: number;
+  onLostFocus?: (value: number) => void;
 }
 
 const TimeInput: React.FC<ITimeInputProps> = ({
-  timeInputRef,
   style,
   maxValue,
-  minValue,
   caption,
+  value,
+  onLostFocus,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 
-  const handleChange = (value: number) => {
-    if (timeInputRef !== undefined) {
-      timeInputRef.current = value;
-    }
+  const handleLostFocus = (value: number) => {
+    setIsFocus(false);
+    onLostFocus?.(value);
   };
-
-  useEffect(() => {
-    if (timeInputRef !== undefined && timeInputRef.current === undefined) {
-      timeInputRef.current = 0;
-    }
-  }, []);
 
   return (
     <View style={[style, styles.container]}>
@@ -43,14 +36,12 @@ const TimeInput: React.FC<ITimeInputProps> = ({
         ]}
       >
         <NumericInput
-          defaultValue={timeInputRef !== undefined ? timeInputRef.current : 0}
           style={styles.input}
+          value={value}
           maxLength={2}
           maxValue={maxValue}
-          minValue={minValue}
           onFocus={() => setIsFocus(true)}
-          onLostFocus={() => setIsFocus(false)}
-          onValueChange={handleChange}
+          onLostFocus={handleLostFocus}
         />
       </View>
       <Text style={styles.text}>{caption}</Text>
