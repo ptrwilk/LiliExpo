@@ -7,16 +7,19 @@ import { ServerStatus } from "../Context/LiliContext";
 
 interface IServerStatusIndicator {
   status: ServerStatus;
+  onPress?: () => void;
 }
 
 const ServerStatusIndicator: React.FC<IServerStatusIndicator> = ({
   status,
+  onPress,
 }) => {
   return (
     <FontCircleButton
       size={40}
       color={Colors.BackgroundColor}
       pressedColor={Colors.BackgroundDarkColor}
+      onPress={onPress}
     >
       <Entypo name="signal" size={24} color="black" />
       <View

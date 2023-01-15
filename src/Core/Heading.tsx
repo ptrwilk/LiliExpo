@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { getShutdownState } from "../Api/Shutdown";
 import { useLiliContext } from "../Context/LiliContext";
 
-const Heading = () => {
+const Heading = ({ navigate }) => {
   const { serverStatus, setServerStatus } = useLiliContext();
 
   useEffect(() => {
@@ -23,7 +23,10 @@ const Heading = () => {
       <View style={styles.container}>
         <Text style={styles.text}>L I L I</Text>
         <View style={styles.rightContainer}>
-          <ServerStatusIndicator status={serverStatus} />
+          <ServerStatusIndicator
+            status={serverStatus}
+            onPress={() => navigate("indicator-menu")}
+          />
         </View>
       </View>
     </SingleSidedShadowBox>

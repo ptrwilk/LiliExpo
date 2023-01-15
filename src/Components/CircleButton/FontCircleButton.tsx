@@ -6,6 +6,7 @@ interface ICircleButtonProps {
   size?: number;
   color?: ColorValue;
   pressedColor?: ColorValue;
+  onPress?: () => void;
 }
 
 const FontCircleButton: React.FC<ICircleButtonProps> = ({
@@ -13,9 +14,11 @@ const FontCircleButton: React.FC<ICircleButtonProps> = ({
   size,
   color,
   pressedColor,
+  onPress,
 }) => {
   return (
     <Pressable
+      onPress={onPress}
       style={({ pressed }) => [
         styles.container,
         {
