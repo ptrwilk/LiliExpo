@@ -58,10 +58,10 @@ const AnimatedProgressBarLine: React.FC<IAnimatedProgressBarLineProps> = ({
 
   useEffect(() => {
     let prevProgress = 0;
-
     translateXAnimated.addListener(({ value: transition }) => {
-      if (progressBarWidthRef.current !== undefined && duration !== 0) {
+      if (progressBarWidthRef.current !== undefined) {
         const progress = transitionToProgress(transition);
+
         if (prevProgress !== progress) {
           onProgressChange?.(progress);
 
@@ -79,9 +79,11 @@ const AnimatedProgressBarLine: React.FC<IAnimatedProgressBarLineProps> = ({
     <View
       style={[style, styles.container, { backgroundColor: color }]}
       onLayout={({ nativeEvent }) => {
-        setProgressBarWidth(nativeEvent.layout.width);
-        translateXAnimated.setValue(-nativeEvent.layout.width);
-        progressBarWidthRef.current = nativeEvent.layout.width;
+        if (progressBarWidthRef.current === undefined) {
+          setProgressBarWidth(nativeEvent.layout.width);
+          translateXAnimated.setValue(-nativeEvent.layout.width);
+          progressBarWidthRef.current = nativeEvent.layout.width;
+        }
       }}
     >
       <Animated.View
