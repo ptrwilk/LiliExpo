@@ -13,6 +13,8 @@ export const Colors = {
   SecondLightColor: "#06F6FF",
   ServerStatusOn: "#26b034",
   ServerStatusOff: "#df5959",
+  BlackColor: "#000000",
+  SelectionColor: "#ff00e3",
 };
 
 export type Style = StyleProp<ViewStyle> | undefined | TextStyle;

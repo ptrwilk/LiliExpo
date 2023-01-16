@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { Colors, Style } from "../styles";
-import NumericInput from "./NumericInput";
+import React from "react";
+import { Style } from "../styles";
+import Caption from "./Caption";
+import BorderNumericInput from "./NumericInput/BorderNumericInput";
 
 interface ITimeInputProps {
   style?: Style;
@@ -18,61 +18,16 @@ const TimeInput: React.FC<ITimeInputProps> = ({
   value,
   onLostFocus,
 }) => {
-  const [isFocus, setIsFocus] = useState(false);
-
-  const handleLostFocus = (value: number) => {
-    setIsFocus(false);
-    onLostFocus?.(value);
-  };
-
   return (
-    <View style={[style, styles.container]}>
-      <View
-        style={[
-          styles.inputContainer,
-          {
-            borderColor: isFocus ? Colors.SecondLightColor : Colors.WhiteColor,
-          },
-        ]}
-      >
-        <NumericInput
-          style={styles.input}
-          value={value}
-          maxLength={2}
-          maxValue={maxValue}
-          onFocus={() => setIsFocus(true)}
-          onLostFocus={handleLostFocus}
-        />
-      </View>
-      <Text style={styles.text}>{caption}</Text>
-    </View>
+    <Caption style={style} caption={caption}>
+      <BorderNumericInput
+        value={value}
+        maxLength={2}
+        maxValue={maxValue}
+        onLostFocus={onLostFocus}
+      />
+    </Caption>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: 45,
-    alignItems: "center",
-  },
-  inputContainer: {
-    justifyContent: "center",
-    width: 50,
-    height: 45,
-    borderWidth: 1,
-    borderRadius: 4,
-  },
-  input: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "200",
-    color: Colors.WhiteColor,
-    outlineStyle: "none",
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: "200",
-    color: Colors.WhiteColor,
-  },
-});
 
 export default TimeInput;

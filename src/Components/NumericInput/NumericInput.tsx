@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
-import { isEmptyOrUndefined } from "../Helpers/Helper";
-import { Style } from "../styles";
+import { isEmptyOrUndefined } from "../../Helpers/Helper";
+import { Style } from "../../styles";
 
 interface INumericInput {
   maxLength?: number;
