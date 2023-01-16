@@ -1,6 +1,7 @@
 import axios from "axios";
+import { ApiUri } from "../global";
 
-const withUrl = (path: string) => `${"http://192.168.0.178:5001"}/${path}`;
+const withUrl = (path: string) => `${ApiUri}/${path}`;
 
 const useCancelationToken = () => {
   const source = axios.CancelToken.source();

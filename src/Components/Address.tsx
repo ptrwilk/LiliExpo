@@ -4,7 +4,7 @@ import { Colors, Style } from "../styles";
 import Caption from "./Caption";
 import BorderNumericInput from "./NumericInput/BorderNumericInput";
 
-type AddressType = {
+export type AddressType = {
   a: number;
   b: number;
   c: number;
